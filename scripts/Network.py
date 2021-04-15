@@ -61,6 +61,14 @@ class Net(nn.Module):
         x = F.relu(self.l9(x))
         return self.l10(x)
 
+def netEval(model, data): 
+    # This function (hopefully) accepts a Net object and some data, runs the data through the nn,
+    # and returns the prediction
+    model.eval()
+    output = model(data)
+    prediction = torch.argmax(output) #Unsure if this is valid in our case? Still needs testing
+    return prediction
+
 # Instantiating a Net object 
 model = Net()
 
