@@ -12,6 +12,9 @@ import torch.nn.functional as F           # layers, activations and more
 import torch.optim as optim               # optimizers e.g. gradient descent, ADAM, etc.
 from torch.jit import script, trace       # hybrid frontend decorator and tracing jit
 
+from torch import save as save                    # save funtion to store trained model
+from torch import load as load
+
 # Training settings
 batch_size = 64
 
@@ -37,16 +40,11 @@ class Net(nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        self.l1 = nn.Linear(784, 610) #Layers follow the fibonnaci sequence until reaching desired output size
-        self.l2 = nn.Linear(610, 377)
-        self.l3 = nn.Linear(377, 233)
-        self.l4 = nn.Linear(233, 144)
-        self.l5 = nn.Linear(144, 89)
-        self.l6 = nn.Linear(89, 55)
-        self.l7 = nn.Linear(55, 34)
-        self.l8 = nn.Linear(34, 21)
-        self.l9 = nn.Linear(21, 13)
-        self.l10 = nn.Linear(13, 10)
+        self.l1 = nn.Linear(784, 520)
+        self.l2 = nn.Linear(520, 320)
+        self.l3 = nn.Linear(320, 240)
+        self.l4 = nn.Linear(240, 120)
+        self.l5 = nn.Linear(120, 10)
 
     def forward(self, x):
         x = x.view(-1, 784)  # Flatten the data (n, 1, 28, 28)-> (n, 784)
@@ -54,16 +52,12 @@ class Net(nn.Module):
         x = F.relu(self.l2(x))
         x = F.relu(self.l3(x))
         x = F.relu(self.l4(x))
-        x = F.relu(self.l5(x))
-        x = F.relu(self.l6(x))
-        x = F.relu(self.l7(x))
-        x = F.relu(self.l8(x))
-        x = F.relu(self.l9(x))
-        return self.l10(x)
+        return self.l5(x)
 
-def netEval(model, data): 
-    # This function (hopefully) accepts a Net object and some data, runs the data through the nn,
+def netEval(data):
+    # This function (hopefully) runs the data through the currently saved nn,
     # and returns the prediction
+    model = load('model.pth')
     model.eval()
     output = model(data)
     prediction = torch.argmax(output) #Unsure if this is valid in our case? Still needs testing
@@ -92,7 +86,8 @@ def train(epoch):
             print('Train Epoch: {} | Batch Status: {}/{} ({:.0f}%) | Loss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
-
+    # Saving the model so it can be used again without retraining (unsure if this the right place for this)
+    save(model, 'model.pth')
 
 def test():
      #Disables updating model weights
@@ -107,12 +102,17 @@ def test():
         pred = output.data.max(1, keepdim=True)[1]
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
+    test_loss /= len(test_loader.dataset)
+    print(f'===========================\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} '
+          f'({100. * correct / len(test_loader.dataset):.0f}%)')
 
-if __name__ == '__main__':
+
+def test_and_train(US_epoch): #Acceptd a user selected value of epoch
     since = time.time()
-    for epoch in range(1, 10):
+    for epoch in range(1, US_epoch):
         epoch_start = time.time()
         train(epoch)
+
         m, s = divmod(time.time() - epoch_start, 60)
         print(f'Training time: {m:.0f}m {s:.0f}s')
         test()
@@ -121,5 +121,8 @@ if __name__ == '__main__':
 
     m, s = divmod(time.time() - since, 60)
     print(f'Total Time: {m:.0f}m {s:.0f}s')
+
+if __name__ == '__main__':
+    test_and_train(2)
 
 
