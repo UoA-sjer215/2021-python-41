@@ -1,16 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QLabel, QVBoxLayout, QGroupBox, QRadioButton, QCheckBox, QPushButton, QMenu, QGridLayout, QVBoxLayout, QProgressBar, QSpinBox
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QBasicTimer
+
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 
-epoch = 0
+
 
 
 class App (QWidget):
+    epoch = 0
     def __init__ (self):
         super().__init__()
         self.main()
@@ -59,18 +58,26 @@ class App (QWidget):
 
         return groupbox
 
+
+    def value_changed(self):
+        self.epoch = self.epoch_value.value()
+
+    def train_clicked(self):
+        print('connect this function to the train function, and remember to take teh epoch amount')
+
     def training(self):
         groupbox = QGroupBox('Training Settings')
 
-        spinbox = QSpinBox()
-        spinbox.setRange(0, 15)
-        spinbox.setSingleStep(2)        
-        spinbox.valueChanged.connect(self.value_changed)
+        self.epoch_value = QSpinBox()
+        self.epoch_value.setRange(0, 15)
+        self.epoch_value.setSingleStep(2)        
+        self.epoch_value.valueChanged.connect(self.value_changed)
 
         lbl1 = QLabel('Epoch Amount')
         lbl2 = QLabel('(the more you have, the more accurate the model is)')
 
         train = QPushButton('NO PAIN NO TRAIN')
+        train.clicked.connect(self.train_clicked)
 
         pbar = QProgressBar(self)
         pbar.setGeometry(30, 40, 200, 25)
@@ -83,7 +90,7 @@ class App (QWidget):
 
         vbox = QVBoxLayout()
         vbox.addWidget(lbl1)
-        vbox.addWidget(spinbox)
+        vbox.addWidget(self.epoch_value)
         vbox.addWidget(lbl2)
         vbox.addWidget(train)
         vbox.addWidget(pbar)
@@ -96,33 +103,47 @@ class App (QWidget):
     def digitInsert(self):
         groupbox = QGroupBox('Insert Digits')
 
-        # different push buttons
-        pushbutton = QPushButton('Normal Button')
-        togglebutton = QPushButton('Toggle Button')
-        togglebutton.setCheckable(True)
-        togglebutton.setChecked(True)
-        flatbutton = QPushButton('Flat Button')
-        flatbutton.setFlat(True)
-        popupbutton = QPushButton('Popup Button')
-        menu = QMenu(self)
-        menu.addAction('First Item')
-        menu.addAction('Second Item')
-        menu.addAction('Third Item')
-        menu.addAction('Fourth Item')
-        popupbutton.setMenu(menu)
+        self.blank = QPixmap('blank.jpg')
+        lbl_img = QLabel()
+        lbl_img.setPixmap(self.blank)
+        self.pen = QPen(Qt.black, 3)
+        
+        
 
         vbox = QVBoxLayout()
-        vbox.addWidget(pushbutton)
-        vbox.addWidget(togglebutton)
-        vbox.addWidget(flatbutton)
-        vbox.addWidget(popupbutton)
+        vbox.addWidget(lbl_img)
+
         vbox.addStretch(1)
         groupbox.setLayout(vbox)
 
         return groupbox
 
-    def value_changed(self):
-        epoch = self.spinbox.value()
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        self.blank = QPixmap("blank.png")
+        painter.drawPixmap(self.rect(), self.blank)
+        
+        painter.setPen(self.pen)
+
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drawing = True
+            self.lastPoint = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() and Qt.LeftButton and self.drawing:
+            painter = QPainter(self.blank)
+            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
+            painter.drawLine(self.lastPoint, event.pos())
+            self.lastPoint = event.pos()
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        if event.button == Qt.LeftButton:
+            self.drawing = False
+
+    
 
 
 
