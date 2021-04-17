@@ -65,6 +65,23 @@ class App (QWidget):
     def train_clicked(self):
         print('connect this function to the train function, and remember to take teh epoch amount')
 
+    def timerEvent(self, e):
+        if self.step >= 100:
+            self.timer.stop()
+            self.start_btn.setText('Finished')
+            return
+
+        self.step = self.step + 1
+        self.pbar.setValue(self.step)           # update the progress bar
+
+    def doAction(self):
+        if self.timer.isActive():
+            self.timer.stop()
+            self.start_btn.setText('Start')
+        else:
+            self.timer.start(100, self)
+            self.start_btn.setText('Stop')
+
     def training(self):
         groupbox = QGroupBox('Training Settings')
 
@@ -79,11 +96,15 @@ class App (QWidget):
         train = QPushButton('NO PAIN NO TRAIN')
         train.clicked.connect(self.train_clicked)
 
-        pbar = QProgressBar(self)
-        pbar.setGeometry(30, 40, 200, 25)
+        self.pbar = QProgressBar(self)
+        self.pbar.setGeometry(30, 40, 200, 25)
 
-        btn = QPushButton('Start')
-        btn.move(40, 80)
+        self.timer = QBasicTimer()
+        self.step = 0 
+
+        self.start_btn = QPushButton('Start')
+        self.start_btn.clicked.connect(self.doAction)
+        # btn.move(40, 80)
 
         
         
@@ -93,8 +114,8 @@ class App (QWidget):
         vbox.addWidget(self.epoch_value)
         vbox.addWidget(lbl2)
         vbox.addWidget(train)
-        vbox.addWidget(pbar)
-        vbox.addWidget(btn)
+        vbox.addWidget(self.pbar)
+        vbox.addWidget(self.start_btn)
         groupbox.setLayout(vbox)
 
         return groupbox
