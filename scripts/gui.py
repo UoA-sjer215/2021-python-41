@@ -181,12 +181,13 @@ class Drawer(QWidget):
             self.lastPoint = event.pos()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() and Qt.LeftButton and self.drawing and 1:
+        if event.buttons() and Qt.LeftButton and self.drawing :
             painter = QPainter(self.image)
             painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
+            print(self.image.save('new_digit', "PNG"))
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
