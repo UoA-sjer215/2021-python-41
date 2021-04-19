@@ -18,22 +18,19 @@ from torch import load as load
 # Training settings
 batch_size = 64
 
-# Downloading/locating MNIST Dataset
 
-train_dataset = datasets.MNIST(root='mnist_data_train/', train=True, transform=transforms.ToTensor(), download=False)
+# Downloading/locating MNIST Dataset 
+def get_train_set():
+    train_dataset = datasets.MNIST(root='mnist_data_train/', train=True, transform=transforms.ToTensor(), download=False)
+    train_loader = data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
-test_dataset = datasets.MNIST(root='mnist_data_test/', train=False, transform=transforms.ToTensor(), download=False)
+    return train_loader
 
-print('*****datasets loaded*****') #DEBUGGING
+def get_test_set():
+    test_dataset = datasets.MNIST(root='mnist_data_test/', train=False, transform=transforms.ToTensor(), download=False)
+    test_loader = data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 
-# Data Loader (Input Pipeline)
-train_loader = data.DataLoader(dataset=train_dataset,
-                                           batch_size=batch_size,
-                                           shuffle=True)
-
-test_loader = data.DataLoader(dataset=test_dataset,
-                                          batch_size=batch_size,
-                                          shuffle=False)
+    return test_loader
 
 #Defining the Net class
 class Net(nn.Module):
@@ -70,7 +67,7 @@ model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-def train(epoch):
+def train(epoch, train_loader):
     #Enables updating model weight
     model.train()
     # the enumerate function is supported by the DataLoader class, allowing us to traverse train_loader
@@ -89,7 +86,7 @@ def train(epoch):
     # Saving the model so it can be used again without retraining (unsure if this the right place for this)
     save(model, 'model.pth')
 
-def test():
+def test(test_loader):
      #Disables updating model weights
     model.train(False)
     test_loss = 0
@@ -107,15 +104,22 @@ def test():
           f'({100. * correct / len(test_loader.dataset):.0f}%)')
 
 
-def test_and_train(US_epoch): #Acceptd a user selected value of epoch
+def test_and_train(US_epoch, tain_loader, tst_loader): #Accepts a user selected value of epoch
+    for epoch in range(1, US_epoch):
+        train(epoch, tain_loader)
+        test(tst_loader)
+
+def testtest_and_train(US_epoch, tain_loader, tst_loader): #Accepts a user selected value of epoch
     since = time.time()
     for epoch in range(1, US_epoch):
         epoch_start = time.time()
-        train(epoch)
+        train(epoch, tain_loader)
 
         m, s = divmod(time.time() - epoch_start, 60)
         print(f'Training time: {m:.0f}m {s:.0f}s')
-        test()
+
+        test(tst_loader)
+
         m, s = divmod(time.time() - epoch_start, 60)
         print(f'Testing time: {m:.0f}m {s:.0f}s')
 

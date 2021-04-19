@@ -1,5 +1,7 @@
 import sys
 
+import Network
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -10,10 +12,12 @@ from PyQt5.QtCore import *
 
 class App (QWidget):
     epoch = 0
+    train_loader = None
+    test_loader = None
+    
     def __init__ (self):
         super().__init__()
         self.main()
-
  
     def main (self):
         self.setWindowTitle("main")
@@ -33,12 +37,18 @@ class App (QWidget):
 
         self.show()
 
+    def import_clicked(self):
+        self.test_loader = Network.get_test_set()
+        self.train_loader = Network.get_train_set()
+        print(self.train_loader)
+        print(self.test_loader)
 
     def preTraining(self):
         groupbox = QGroupBox('Pre-Training Settings')
 
 
         importTraining = QPushButton('Import')
+        importTraining.clicked.connect(self.import_clicked)
 
         pixmap = QPixmap('cat.jpg')
         lbl_img = QLabel()
@@ -63,7 +73,10 @@ class App (QWidget):
         self.epoch = self.epoch_value.value()
 
     def train_clicked(self):
-        print('connect this function to the train function, and remember to take teh epoch amount')
+        print(self.test_loader)
+        print(self.train_loader)
+        print(Network.test_and_train(self.epoch, self.train_loader, self.test_loader))
+
 
     def training(self):
         groupbox = QGroupBox('Training Settings')
@@ -142,11 +155,6 @@ class App (QWidget):
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
             self.drawing = False
-
-    
-
-
-
 
 #creates the qapplication
 parent = QApplication(sys.argv)
