@@ -8,16 +8,16 @@ from PyQt5.QtCore import *
 
 
 filePlace = ''
-epoch = 0
+
 
 class App (QWidget):
     epoch = 0
     train_loader = None
     test_loader = None
     
-    def __init__ (self):
+    def __init__ (self,num):
         super().__init__()
-        self.main()
+        self.main(num)
  
     def main (self,num):
 
@@ -38,9 +38,10 @@ class App (QWidget):
             self.show()
 
         elif num == 2 :
+            self.setWindowTitle("drawing")
             self.drawing = False
             self.lastPoint = QPoint()
-            self.image = QPixmap("blank.jpg")
+            self.image = QPixmap("cat.jpg")
             self.move(500,200)
             self.resize(400,400)
             self.show()
@@ -91,27 +92,23 @@ class App (QWidget):
         self.epoch = self.epoch_value.value()
 
     def train_clicked(self):
-        print(self.test_loader)
-        print(self.train_loader)
-        print(Network.test_and_train(self.epoch, self.train_loader, self.test_loader))
+        for epoch in range(1, self.epoch+1):
+            progress = Network.train(epoch, self.train_loader)
+            Network.test(self.test_loader)
+            self.timerEvent(100/(self.epoch) * progress)
+            
+        
 
 
-    def timerEvent(self, e):
-        if self.step >= 100:
-            self.timer.stop()
-            self.start_btn.setText('Finished')
-            return
 
-        self.step = self.step + 1
-        self.pbar.setValue(self.step)           # update the progress bar
+    def timerEvent(self,percentage):
+        # if percentage >= 100:
+        #     return
+        self.pbar.setValue(percentage)           # update the progress bar
 
     def doAction(self):
-        if self.timer.isActive():
-            self.timer.stop()
-            self.start_btn.setText('Start')
-        else:
-            self.timer.start(100, self)
-            self.start_btn.setText('Stop')
+        while self.step < 101:
+            self.timerEvent()
 
     def training(self):
         groupbox = QGroupBox('Training Settings')
@@ -134,7 +131,6 @@ class App (QWidget):
 
         self.start_btn = QPushButton('Start')
         self.start_btn.clicked.connect(self.doAction)
-        # btn.move(40, 80)
 
         vbox = QVBoxLayout()
         vbox.addWidget(lbl1)
@@ -147,7 +143,7 @@ class App (QWidget):
         return groupbox
 
     def open(self):
-        self.drawing_window = App(2)
+        drawW.show()
 
 
 
@@ -161,9 +157,22 @@ class App (QWidget):
         groupbox.setLayout(vbox)
         return groupbox
 
+
+class Drawer(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("drawing")
+        self.drawing = False
+        self.lastPoint = QPoint()
+        self.image = QPixmap("blank.jpg")
+        self.resize(self.image.width(), self.image.height())
+        self.move(500,200)
+
+
     def paintEvent(self, event):
         painter = QPainter(self)
-        self.blank = QPixmap("blank.jpg")
+        painter.drawPixmap(self.rect(), self.image)
 
 
     def mousePressEvent(self, event):
@@ -173,8 +182,8 @@ class App (QWidget):
 
     def mouseMoveEvent(self, event):
         if event.buttons() and Qt.LeftButton and self.drawing and 1:
-            painter = QPainter(self.blank)
-            painter.setPen(QPen(Qt.red, 3, Qt.SolidLine))
+            painter = QPainter(self.image)
+            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
@@ -187,6 +196,7 @@ class App (QWidget):
 parent = QApplication(sys.argv)
 
 mainW = App(1)
+drawW = Drawer()
 
 
 #execute the qapplication

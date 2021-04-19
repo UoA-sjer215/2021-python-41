@@ -1,61 +1,43 @@
 import sys
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtGui import QPixmap, QPainter, QPen
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 
-filePlace = ''
-
-class App(QWidget):
+class Menu(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 file dialogs - pythonspot.com'
-        self.left = 10
-        self.top = 10
-        self.width = 640
-        self.height = 480
-        self.initUI()
-    
-    def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.drawing = False
+        self.lastPoint = QPoint()
+        self.image = QPixmap("cat.jpg")
+        self.setGeometry(100, 100, 500, 300)
+        self.resize(self.image.width(), self.image.height())
+        self.show()
 
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            print(fileName)
-            filePlace = fileName
-            print(filePlace)
-    
-    def openFileNameDialog(self,other):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            print(fileName)
-            filePlace = fileName
-            print(filePlace)
-            other.close()
-            self.close()
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.drawPixmap(self.rect(), self.image)
 
-    
-    # def openFileNamesDialog(self):
-    #     options = QFileDialog.Options()
-    #     options |= QFileDialog.DontUseNativeDialog
-    #     files, _ = QFileDialog.getOpenFileNames(self,"QFileDialog.getOpenFileNames()", "","All Files (*);;Python Files (*.py)", options=options)
-    #     if files:
-    #         print(files)
-    
-    # def saveFileDialog(self):
-    #     options = QFileDialog.Options()
-    #     options |= QFileDialog.DontUseNativeDialog
-    #     fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)", options=options)
-    #     if fileName:
-    #         print(fileName)
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drawing = True
+            self.lastPoint = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() and Qt.LeftButton and self.drawing:
+            painter = QPainter(self.image)
+            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
+            painter.drawLine(self.lastPoint, event.pos())
+            self.lastPoint = event.pos()
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        if event.button == Qt.LeftButton:
+            self.drawing = False
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = App()
+    mainMenu = Menu()
     sys.exit(app.exec_())

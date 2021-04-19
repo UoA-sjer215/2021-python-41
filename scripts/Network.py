@@ -79,12 +79,13 @@ def train(epoch, train_loader):
         loss.backward()
         optimizer.step()
         #Printing updates as training occurs
-        if batch_idx % 10 == 0:
+        if batch_idx % 25 == 0:
             print('Train Epoch: {} | Batch Status: {}/{} ({:.0f}%) | Loss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
     # Saving the model so it can be used again without retraining (unsure if this the right place for this)
     save(model, 'model.pth')
+    return epoch
 
 def test(test_loader):
      #Disables updating model weights
