@@ -5,40 +5,62 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
-
-
+filePlace = ''
+epoch = 0
 
 class App (QWidget):
-    epoch = 0
-    def __init__ (self):
+    
+    def __init__ (self,num):
         super().__init__()
-        self.main()
+        self.main(num)
 
  
-    def main (self):
-        self.setWindowTitle("main")
-        self.move(500,300)
-        self.setWindowIcon(QIcon('cat.jpg'))
-        self.resize(900,600)
+    def main (self,num):
+
+        if num == 1:
+            self.setWindowTitle("main")
+            self.move(500,200)
+            self.setWindowIcon(QIcon('cat.jpg'))
+            self.resize(900,600)
 
         
-        grid = QGridLayout()
-        grid.addWidget(self.preTraining(), 0, 0)
-        grid.addWidget(self.training(), 0, 1)
-        grid.addWidget(self.digitInsert(), 1, 1)
+            grid = QGridLayout()
+            grid.addWidget(self.preTraining(), 0, 0)
+            grid.addWidget(self.training(), 0, 1)
+            grid.addWidget(self.digitInsert(), 1, 1)
 
-        self.setLayout(grid)
+            self.setLayout(grid)
 
+            self.show()
 
+        elif num == 2 :
+            self.drawing = False
+            self.lastPoint = QPoint()
+            self.image = QPixmap("blank.jpg")
+            self.move(500,200)
+            self.resize(400,400)
+            self.show()
 
-        self.show()
+        elif num == 3 :
+            self.setWindowTitle('find training data')
+            self.setGeometry(500,200,900,600)
 
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+            if fileName:
+                filePlace = fileName
+
+        
+    def import_method(self):
+        impW = App(3)
 
     def preTraining(self):
         groupbox = QGroupBox('Pre-Training Settings')
 
 
         importTraining = QPushButton('Import')
+        importTraining.clicked.connect(self.import_method)
 
         pixmap = QPixmap('cat.jpg')
         lbl_img = QLabel()
@@ -90,8 +112,7 @@ class App (QWidget):
         self.epoch_value.setSingleStep(2)        
         self.epoch_value.valueChanged.connect(self.value_changed)
 
-        lbl1 = QLabel('Epoch Amount')
-        lbl2 = QLabel('(the more you have, the more accurate the model is)')
+        lbl1 = QLabel('Epoch Amount (the more you have, the more accurate the model is)')
 
         train = QPushButton('NO PAIN NO TRAIN')
         train.clicked.connect(self.train_clicked)
@@ -106,13 +127,9 @@ class App (QWidget):
         self.start_btn.clicked.connect(self.doAction)
         # btn.move(40, 80)
 
-        
-        
-
         vbox = QVBoxLayout()
         vbox.addWidget(lbl1)
         vbox.addWidget(self.epoch_value)
-        vbox.addWidget(lbl2)
         vbox.addWidget(train)
         vbox.addWidget(self.pbar)
         vbox.addWidget(self.start_btn)
@@ -120,31 +137,24 @@ class App (QWidget):
 
         return groupbox
 
+    def open(self):
+        self.drawing_window = App(2)
+
+
 
     def digitInsert(self):
-        groupbox = QGroupBox('Insert Digits')
-
-        self.blank = QPixmap('blank.jpg')
-        lbl_img = QLabel()
-        lbl_img.setPixmap(self.blank)
-        self.pen = QPen(Qt.black, 3)
+        groupbox = QGroupBox('Drawing')
+        open_drawing = QPushButton('Draw')
+        open_drawing.clicked.connect(self.open)
         
-        
-
         vbox = QVBoxLayout()
-        vbox.addWidget(lbl_img)
-
-        vbox.addStretch(1)
+        vbox.addWidget(open_drawing)
         groupbox.setLayout(vbox)
-
         return groupbox
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        self.blank = QPixmap("blank.png")
-        painter.drawPixmap(self.rect(), self.blank)
-        
-        painter.setPen(self.pen)
+        self.blank = QPixmap("blank.jpg")
 
 
     def mousePressEvent(self, event):
@@ -153,9 +163,9 @@ class App (QWidget):
             self.lastPoint = event.pos()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() and Qt.LeftButton and self.drawing:
+        if event.buttons() and Qt.LeftButton and self.drawing and 1:
             painter = QPainter(self.blank)
-            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
+            painter.setPen(QPen(Qt.red, 3, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
@@ -172,7 +182,7 @@ class App (QWidget):
 #creates the qapplication
 parent = QApplication(sys.argv)
 
-mainW = App()
+mainW = App(1)
 
 
 #execute the qapplication
