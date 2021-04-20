@@ -1,43 +1,53 @@
+#importing libraries
+from PyQt5.QtWidgets import * 
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import * 
+from PyQt5.QtCore import * 
 import sys
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from PyQt5.QtGui import QPixmap, QPainter, QPen
-
-
-class Menu(QMainWindow):
-
+  
+  
+class Window(QMainWindow):
+  
+  
     def __init__(self):
         super().__init__()
-        self.drawing = False
-        self.lastPoint = QPoint()
-        self.image = QPixmap("cat.jpg")
-        self.setGeometry(100, 100, 500, 300)
-        self.resize(self.image.width(), self.image.height())
+  
+        # setting title
+        self.setWindowTitle("Python ")
+  
+        # setting geometry
+        self.setGeometry(100, 100, 600, 400)
+  
+        # calling method
+        self.UiComponents()
+  
+        # showing all the widgets
         self.show()
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawPixmap(self.rect(), self.image)
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.drawing = True
-            self.lastPoint = event.pos()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() and Qt.LeftButton and self.drawing:
-            painter = QPainter(self.image)
-            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
-            painter.drawLine(self.lastPoint, event.pos())
-            self.lastPoint = event.pos()
-            self.update()
-
-    def mouseReleaseEvent(self, event):
-        if event.button == Qt.LeftButton:
-            self.drawing = False
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    mainMenu = Menu()
-    sys.exit(app.exec_())
+  
+    # method for widgets
+    def UiComponents(self):
+  
+        # creating progress bar
+        bar = QProgressBar(self)
+  
+        # setting geometry to progress bar
+        bar.setGeometry(200, 150, 200, 30)
+  
+        # set value to progress bar
+        bar.setValue(70)
+  
+        # setting text 
+        bar.setFormat('This is progress bar')
+  
+        # setting alignment to centre
+        bar.setAlignment(Qt.AlignCenter)
+  
+  
+# create pyqt5 app
+App = QApplication(sys.argv)
+  
+# create the instance of our Window
+window = Window()
+  
+# start the app
+sys.exit(App.exec())

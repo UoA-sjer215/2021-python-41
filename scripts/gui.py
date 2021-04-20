@@ -27,18 +27,25 @@ def QPixmapToArray(pixmap):
 
     return img
 
+#Main function that creates the window
 class App (QWidget):
+    #important data needed
     epoch = 0
     train_loader = None
     test_loader = None
     
+    #initiate function
     def __init__ (self,num):
         super().__init__()
         self.main(num)
  
+    #start function that creates the windows
     def main (self,num):
+        #the numbers are for different windows that can be opened
+        #not all of them are currently in use
 
         if num == 1:
+            #main start window
             self.setWindowTitle("main")
             self.move(500,200)
             self.setWindowIcon(QIcon('cat.jpg'))
@@ -56,6 +63,7 @@ class App (QWidget):
             self.show()
 
         elif num == 2 :
+            #The old drawing window, (no longer used)
             self.setWindowTitle("drawing")
             self.drawing = False
             self.lastPoint = QPoint()
@@ -65,6 +73,7 @@ class App (QWidget):
             self.show()
 
         elif num == 3 :
+            #File dialog window, (can get a file path)
             self.setWindowTitle('find training data')
             self.setGeometry(500,200,900,600)
 
@@ -74,6 +83,7 @@ class App (QWidget):
             if fileName:
                 filePlace = fileName
 
+    #imports the data
     def import_clicked(self):
         self.test_loader = Network.get_test_set()
         self.train_loader = Network.get_train_set()
@@ -167,11 +177,12 @@ class App (QWidget):
         return groupbox
 
     def open(self):
-        drawW.show()
+        self.drawW = Drawer()
+        self.drawW.show()
 
     def digitInsert(self):
         groupbox = QGroupBox('Drawing')
-        open_drawing = QPushButton('Draw')
+        open_drawing = QPushButton('new draw')
         open_drawing.clicked.connect(self.open)
 
         test_drawing = QPushButton('Test Drawing')
@@ -186,16 +197,26 @@ class App (QWidget):
 
     def guess(self):
         groupbox = QGroupBox('Number Guesses')
-        self.N0 = QProgressBar(self)
-        self.N1 = QProgressBar(self)
-        self.N2 = QProgressBar(self)
-        self.N3 = QProgressBar(self)
-        self.N4 = QProgressBar(self)
-        self.N5 = QProgressBar(self)
-        self.N6 = QProgressBar(self)
-        self.N7 = QProgressBar(self)
-        self.N8 = QProgressBar(self)
-        self.N9 = QProgressBar(self)
+        N0 = QProgressBar(self)
+        N0.setFormat('digit 0')
+        N1 = QProgressBar(self)
+        N1.setFormat('digit 1')
+        N2 = QProgressBar(self)
+        N2.setFormat('digit 2')
+        N3 = QProgressBar(self)
+        N3.setFormat('digit 3')
+        N4 = QProgressBar(self)
+        N4.setFormat('digit 4')
+        N5 = QProgressBar(self)
+        N5.setFormat('digit 5')
+        N6 = QProgressBar(self)
+        N6.setFormat('digit 6')
+        N7 = QProgressBar(self)
+        N7.setFormat('digit 7')
+        N8 = QProgressBar(self)
+        N8.setFormat('digit 8')
+        N9 = QProgressBar(self)
+        N9.setFormat('digit 9')
 
         vbox = QVBoxLayout()
         vbox.addWidget(N0)
@@ -239,6 +260,7 @@ class Drawer(QWidget):
         self.image.save('blank.png', 'PNG')
         self.resize(self.image.width(), self.image.height())
         self.move(500,200)
+        self.show()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -266,7 +288,7 @@ class Drawer(QWidget):
 parent = QApplication(sys.argv)
 
 mainW = App(1)
-drawW = Drawer()
+# drawW = Drawer()
 
 
 #execute the qapplication
