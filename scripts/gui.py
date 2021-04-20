@@ -97,13 +97,7 @@ class App (QWidget):
 
     def go_next(self):
         print('next')
-         # Called when we do next(iterator)
-        if self.picplace >= Maxvalue:
-            # Terminating condition
-            raise StopIteration
-        self.picplace += 1
-        # Return the previously current value
-        self.dataImage = QPixmap(self.AllDataImages(picplace-1))
+        
 
 
 
