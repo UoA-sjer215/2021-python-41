@@ -32,6 +32,7 @@ class App (QWidget):
             grid.addWidget(self.preTraining(), 0, 0)
             grid.addWidget(self.training(), 0, 1)
             grid.addWidget(self.digitInsert(), 1, 1)
+            grid.addWidget(self.guess(), 1, 0)
 
             self.setLayout(grid)
 
@@ -156,6 +157,49 @@ class App (QWidget):
         vbox.addWidget(open_drawing)
         groupbox.setLayout(vbox)
         return groupbox
+
+
+    def guess(self):
+        groupbox = QGroupBox('Number Guesses')
+        self.N0 = QProgressBar(self)
+        self.N1 = QProgressBar(self)
+        self.N2 = QProgressBar(self)
+        self.N3 = QProgressBar(self)
+        self.N4 = QProgressBar(self)
+        self.N5 = QProgressBar(self)
+        self.N6 = QProgressBar(self)
+        self.N7 = QProgressBar(self)
+        self.N8 = QProgressBar(self)
+        self.N9 = QProgressBar(self)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(N0)
+        vbox.addWidget(N1)
+        vbox.addWidget(N2)
+        vbox.addWidget(N3)
+        vbox.addWidget(N4)
+        vbox.addWidget(N5)
+        vbox.addWidget(N6)
+        vbox.addWidget(N7)
+        vbox.addWidget(N8)
+        vbox.addWidget(N9)
+
+        groupbox.setLayout(vbox)
+        return groupbox
+
+    def upgrade_guess(self):
+        self.N0.setValue(num0/total_guess * 100) 
+        self.N1.setValue(num0/total_guess * 100) 
+        self.N2.setValue(num0/total_guess * 100) 
+        self.N3.setValue(num0/total_guess * 100) 
+        self.N4.setValue(num0/total_guess * 100) 
+        self.N5.setValue(num0/total_guess * 100) 
+        self.N6.setValue(num0/total_guess * 100) 
+        self.N7.setValue(num0/total_guess * 100) 
+        self.N8.setValue(num0/total_guess * 100) 
+        self.N9.setValue(num0/total_guess * 100) 
+
+
 
 
 class Drawer(QWidget):

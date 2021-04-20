@@ -17,7 +17,17 @@ from torch import load as load
 
 # Training settings
 batch_size = 64
-
+total_guess = 0
+num0 = 0
+num1 = 0
+num2 = 0
+num3 = 0
+num4 = 0
+num5 = 0
+num6 = 0
+num7 = 0
+num8 = 0
+num9 = 0
 
 # Downloading/locating MNIST Dataset 
 def get_train_set():
