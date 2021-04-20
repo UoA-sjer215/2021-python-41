@@ -7,7 +7,12 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from PIL import Image as PIL_Image     
-import numpy as np                                                                    
+import numpy as np      
+
+from matplotlib import pyplot      
+
+
+Maxvalue = 60000
 
 filePlace = ''
 
@@ -29,6 +34,7 @@ class App (QWidget):
     epoch = 0
     train_loader = None
     test_loader = None
+    picplace = 0
     
     #initiate function
     def __init__ (self,num):
@@ -47,7 +53,7 @@ class App (QWidget):
             self.setWindowIcon(QIcon('cat.jpg'))
             self.resize(900,600)
 
-        
+            #sets the quadrants for the amin window ( and location)
             grid = QGridLayout()
             grid.addWidget(self.preTraining(), 0, 0)
             grid.addWidget(self.training(), 0, 1)
@@ -86,6 +92,28 @@ class App (QWidget):
         print(self.train_loader)
         print(self.test_loader)
 
+        self.AllDataImages =  iter(self.test_loader)
+
+
+    def go_next(self):
+        print('next')
+         # Called when we do next(iterator)
+        if self.picplace >= Maxvalue:
+            # Terminating condition
+            raise StopIteration
+        self.picplace += 1
+        # Return the previously current value
+        self.dataImage = QPixmap(self.AllDataImages(picplace-1))
+
+
+
+
+    def go_previous(self):
+        print('back')
+
+
+    #Pre-traingin, will load and make the dataset usable
+    #ahould aslo be able to loop through the images in the dataset 
     def preTraining(self):
         groupbox = QGroupBox('Pre-Training Settings')
 
@@ -93,18 +121,20 @@ class App (QWidget):
         importTraining = QPushButton('Import')
         importTraining.clicked.connect(self.import_clicked)
 
-        pixmap = QPixmap('cat.jpg')
-        lbl_img = QLabel()
-        lbl_img.setPixmap(pixmap)
+        self.dataImage = QPixmap('cat.jpg')
+        self.datasetImage = QLabel()
+        self.datasetImage.setPixmap(self.dataImage)
 
-        dispTraining = QPushButton('Display random training image')
-        dispTesting = QPushButton('Display random testing image')
+        Next = QPushButton('Next')
+        Next.clicked.connect(self.go_next)
+        Previous = QPushButton('Previous')
+        Previous.clicked.connect(self.go_previous)
 
         vbox = QVBoxLayout()
         vbox.addWidget(importTraining)
-        vbox.addWidget(lbl_img)
-        vbox.addWidget(dispTraining)
-        vbox.addWidget(dispTesting)
+        vbox.addWidget(self.datasetImage)
+        vbox.addWidget(Next)
+        vbox.addWidget(Previous)
         
         vbox.addStretch(1)
         groupbox.setLayout(vbox)
@@ -112,24 +142,32 @@ class App (QWidget):
         return groupbox
 
 
+
+    #changes teh current epoch
     def value_changed(self):
         self.epoch = self.epoch_value.value()
 
+    #trains the dataset based on the epoch amount selected
     def train_clicked(self):
         for epoch in range(1, self.epoch+1):
             progress = Network.train(epoch, self.train_loader)
             Network.test(self.test_loader)
             self.timerEvent(100/(self.epoch) * progress)
-            
+
+
+    #updates the trainging progress bar
     def timerEvent(self,percentage):
         # if percentage >= 100:
         #     return
         self.pbar.setValue(percentage)           # update the progress bar
 
+    #calls the function that updates teh trainging progress bar
     def doAction(self):
         while self.step < 101:
             self.timerEvent()
-    
+
+
+    #will submit the drawing created to the NN
     def test_drawing_clicked(self):
         self.image = QPixmap('new_digit')
         self.image = self.image.scaledToHeight(28)
@@ -140,8 +178,12 @@ class App (QWidget):
         prediction = Network.netEval(img)
         print(prediction)
 
+
+
+    #the training quadrant, containt all the stuff inside
     def training(self):
         groupbox = QGroupBox('Training Settings')
+
 
         self.epoch_value = QSpinBox()
         self.epoch_value.setRange(0, 15)
@@ -171,11 +213,13 @@ class App (QWidget):
         groupbox.setLayout(vbox)
 
         return groupbox
-
+        
+    #creates the drawing window
     def open(self):
         self.drawW = Drawer()
         self.drawW.show()
 
+    #Creates teh drawing quadrant
     def digitInsert(self):
         groupbox = QGroupBox('Drawing')
         open_drawing = QPushButton('new draw')
@@ -190,7 +234,7 @@ class App (QWidget):
         groupbox.setLayout(vbox)
         return groupbox
 
-
+    #creates the guess quadrant, (only has progress bars)
     def guess(self):
         groupbox = QGroupBox('Number Guesses')
         self.N0 = QProgressBar(self)
@@ -215,7 +259,7 @@ class App (QWidget):
         self.N9.setFormat('digit 9')
 
         vbox = QVBoxLayout()
-        vbox.addWidget(N0)
+        vbox.addWidget(self.N0)
         vbox.addWidget(self.N1)
         vbox.addWidget(self.N2)
         vbox.addWidget(self.N3)
@@ -229,6 +273,7 @@ class App (QWidget):
         groupbox.setLayout(vbox)
         return groupbox
 
+    #the function to call to update the quess values 
     def upgrade_guess(self):
         self.N0.setValue(num0/total_guess * 100) 
         self.N1.setValue(num0/total_guess * 100) 
