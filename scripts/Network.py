@@ -14,6 +14,9 @@ from torch.jit import script, trace       # hybrid frontend decorator and tracin
 
 from torch import save as save                    # save funtion to store trained model
 from torch import load as load
+from torch import as_tensor as to_tensor
+from torch import float as tfloat
+from torch import argmax
 
 # Training settings
 batch_size = 64
@@ -66,8 +69,9 @@ def netEval(data):
     # and returns the prediction
     model = load('model.pth')
     model.eval()
+    data = to_tensor(data, dtype=tfloat)
     output = model(data)
-    prediction = torch.argmax(output) #Unsure if this is valid in our case? Still needs testing
+    prediction = argmax(output) #Unsure if this is valid in our case? Still needs testing
     return prediction
 
 # Instantiating a Net object 
