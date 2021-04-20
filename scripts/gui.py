@@ -6,9 +6,26 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from PIL import Image as PIL_Image     
+import numpy as np                                                                    
 
 filePlace = ''
 
+def QPixmapToArray(pixmap):
+    ## Get the size of the current pixmap
+    size = pixmap.size()
+    h = size.width()
+    w = size.height()
+
+    ## Get the QImage Item and convert it to a byte string
+    qimg = pixmap.toImage()
+    byte_str = qimg.bits()
+    byte_str = byte_str.np.tobytes()
+
+    ## Using the np.frombuffer function to convert the byte string into an np array
+    img = np.frombuffer(byte_str, dtype=np.uint8).reshape((w,h,4))
+
+    return img
 
 class App (QWidget):
     epoch = 0
@@ -98,10 +115,6 @@ class App (QWidget):
             Network.test(self.test_loader)
             self.timerEvent(100/(self.epoch) * progress)
             
-        
-
-
-
     def timerEvent(self,percentage):
         # if percentage >= 100:
         #     return
@@ -110,6 +123,16 @@ class App (QWidget):
     def doAction(self):
         while self.step < 101:
             self.timerEvent()
+    
+    def test_drawing_clicked(self):
+        self.image = QPixmap('new_digit')
+        print(self.image)
+        self.image = self.image.scaledToHeight(28)
+        print(self.image.save('new_digit_scaled.png',"PNG"))
+        # img = PIL_Image.open('new_digit_scaled.png')
+        print(type(self.image))
+        img = QPixmapToArray(self.image)
+        Network.netEval(img)
 
     def training(self):
         groupbox = QGroupBox('Training Settings')
@@ -146,15 +169,17 @@ class App (QWidget):
     def open(self):
         drawW.show()
 
-
-
     def digitInsert(self):
         groupbox = QGroupBox('Drawing')
         open_drawing = QPushButton('Draw')
         open_drawing.clicked.connect(self.open)
+
+        test_drawing = QPushButton('Test Drawing')
+        test_drawing.clicked.connect(self.test_drawing_clicked)
         
         vbox = QVBoxLayout()
         vbox.addWidget(open_drawing)
+        vbox.addWidget(test_drawing)
         groupbox.setLayout(vbox)
         return groupbox
 
@@ -209,15 +234,15 @@ class Drawer(QWidget):
         self.setWindowTitle("drawing")
         self.drawing = False
         self.lastPoint = QPoint()
-        self.image = QPixmap("blank.jpg")
+        self.image = QPixmap("blank.png")
+        self.image = self.image.scaled(280, 280)
+        self.image.save('blank.png', 'PNG')
         self.resize(self.image.width(), self.image.height())
         self.move(500,200)
-
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.image)
-
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -231,7 +256,7 @@ class Drawer(QWidget):
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
-            print(self.image.save('new_digit', "PNG"))
+            print(self.image.save('new_digit.png', "PNG"))
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
