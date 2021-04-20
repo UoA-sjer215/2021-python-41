@@ -170,6 +170,7 @@ class App (QWidget):
         print("img type is:")
         print(type(img))
         prediction = Network.netEval(img)
+        self.upgrade_guess(prediction)
         print(prediction)
 
 
@@ -231,54 +232,49 @@ class App (QWidget):
     #creates the guess quadrant, (only has progress bars)
     def guess(self):
         groupbox = QGroupBox('Number Guesses')
-        self.N0 = QProgressBar(self)
-        self.N0.setFormat('digit 0')
-        self.N1 = QProgressBar(self)
-        self.N1.setFormat('digit 1')
-        self.N2 = QProgressBar(self)
-        self.N2.setFormat('digit 2')
-        self.N3 = QProgressBar(self)
-        self.N3.setFormat('digit 3')
-        self.N4 = QProgressBar(self)
-        self.N4.setFormat('digit 4')
-        self.N5 = QProgressBar(self)
-        self.N5.setFormat('digit 5')
-        self.N6 = QProgressBar(self)
-        self.N6.setFormat('digit 6')
-        self.N7 = QProgressBar(self)
-        self.N7.setFormat('digit 7')
-        self.N8 = QProgressBar(self)
-        self.N8.setFormat('digit 8')
-        self.N9 = QProgressBar(self)
-        self.N9.setFormat('digit 9')
+
+        self.numGuess =QLabel("No guess made")
+        # self.N0 = QProgressBar(self)
+        # self.N1 = QProgressBar(self)
+        # self.N2 = QProgressBar(self)
+        # self.N3 = QProgressBar(self)
+        # self.N4 = QProgressBar(self)
+        # self.N5 = QProgressBar(self)
+        # self.N6 = QProgressBar(self)
+        # self.N7 = QProgressBar(self)
+        # self.N8 = QProgressBar(self)
+        # self.N9 = QProgressBar(self)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self.N0)
-        vbox.addWidget(self.N1)
-        vbox.addWidget(self.N2)
-        vbox.addWidget(self.N3)
-        vbox.addWidget(self.N4)
-        vbox.addWidget(self.N5)
-        vbox.addWidget(self.N6)
-        vbox.addWidget(self.N7)
-        vbox.addWidget(self.N8)
-        vbox.addWidget(self.N9)
+        vbox.addWidget(self.numGuess)
+        # vbox.addWidget(self.N0)
+        # vbox.addWidget(self.N1)
+        # vbox.addWidget(self.N2)
+        # vbox.addWidget(self.N3)
+        # vbox.addWidget(self.N4)
+        # vbox.addWidget(self.N5)
+        # vbox.addWidget(self.N6)
+        # vbox.addWidget(self.N7)
+        # vbox.addWidget(self.N8)
+        # vbox.addWidget(self.N9)
 
         groupbox.setLayout(vbox)
         return groupbox
 
     #the function to call to update the quess values 
-    def upgrade_guess(self):
-        self.N0.setValue(num0/total_guess * 100) 
-        self.N1.setValue(num0/total_guess * 100) 
-        self.N2.setValue(num0/total_guess * 100) 
-        self.N3.setValue(num0/total_guess * 100) 
-        self.N4.setValue(num0/total_guess * 100) 
-        self.N5.setValue(num0/total_guess * 100) 
-        self.N6.setValue(num0/total_guess * 100) 
-        self.N7.setValue(num0/total_guess * 100) 
-        self.N8.setValue(num0/total_guess * 100) 
-        self.N9.setValue(num0/total_guess * 100) 
+    def upgrade_guess(self,prediction):
+        self.numGuess.setText("Prediction is that its a number" + prediction)
+
+        # self.N0.setValue(num0/total_guess * 100) 
+        # self.N1.setValue(num0/total_guess * 100) 
+        # self.N2.setValue(num0/total_guess * 100) 
+        # self.N3.setValue(num0/total_guess * 100) 
+        # self.N4.setValue(num0/total_guess * 100) 
+        # self.N5.setValue(num0/total_guess * 100) 
+        # self.N6.setValue(num0/total_guess * 100) 
+        # self.N7.setValue(num0/total_guess * 100) 
+        # self.N8.setValue(num0/total_guess * 100) 
+        # self.N9.setValue(num0/total_guess * 100) 
 
 
 
@@ -313,7 +309,6 @@ class Drawer(QWidget):
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
-            print(self.image.save('new_digit.png', "PNG"))
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
