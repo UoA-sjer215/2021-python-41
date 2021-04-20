@@ -19,13 +19,9 @@ def QPixmapToArray(pixmap):
 
     ## Get the QImage Item and convert it to a byte string
     qimg = pixmap.toImage()
-    byte_str = qimg.bits()
-    byte_str = byte_str.np.tobytes()
+    array = qimg.bits().asarray(784)
 
-    ## Using the np.frombuffer function to convert the byte string into an np array
-    img = np.frombuffer(byte_str, dtype=np.uint8).reshape((w,h,4))
-
-    return img
+    return array
 
 class App (QWidget):
     epoch = 0
@@ -125,13 +121,13 @@ class App (QWidget):
     
     def test_drawing_clicked(self):
         self.image = QPixmap('new_digit')
-        print(self.image)
         self.image = self.image.scaledToHeight(28)
         print(self.image.save('new_digit_scaled.png',"PNG"))
-        # img = PIL_Image.open('new_digit_scaled.png')
-        print(type(self.image))
         img = QPixmapToArray(self.image)
-        Network.netEval(img)
+        print("img type is:")
+        print(type(img))
+        prediction = Network.netEval(img)
+        print(prediction)
 
     def training(self):
         groupbox = QGroupBox('Training Settings')
@@ -207,7 +203,7 @@ class Drawer(QWidget):
     def mouseMoveEvent(self, event):
         if event.buttons() and Qt.LeftButton and self.drawing :
             painter = QPainter(self.image)
-            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine))
+            painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
