@@ -20,7 +20,7 @@ from torch import argmax
 
 # Training settings
 batch_size = 64
-total_guess = 0
+
 num0 = 0
 num1 = 0
 num2 = 0
