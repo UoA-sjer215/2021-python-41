@@ -264,7 +264,7 @@ class App (QWidget):
 
     #the function to call to update the quess values 
     def upgrade_guess(self,prediction):
-        self.numGuess.setText("Prediction is that its a number" + prediction)
+        self.numGuess.setText("Prediction is that it's number" + str(prediction))
 
         # self.N0.setValue(num0/total_guess * 100) 
         # self.N1.setValue(num0/total_guess * 100) 
