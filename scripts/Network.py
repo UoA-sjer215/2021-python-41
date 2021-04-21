@@ -34,13 +34,13 @@ num9 = 0
 
 # Downloading/locating MNIST Dataset 
 def get_train_set():
-    train_dataset = datasets.MNIST(root='mnist_data_train/', train=True, transform=transforms.ToTensor(), download=False)
+    train_dataset = datasets.MNIST(root='mnist_data_train/', train=True, transform=transforms.ToTensor(), download=True)
     train_loader = data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
     return train_loader
 
 def get_test_set():
-    test_dataset = datasets.MNIST(root='mnist_data_test/', train=False, transform=transforms.ToTensor(), download=False)
+    test_dataset = datasets.MNIST(root='mnist_data_test/', train=False, transform=transforms.ToTensor(), download=True)
     test_loader = data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 
     return test_loader
@@ -71,8 +71,8 @@ def netEval(data):
     model.eval()
     data = to_tensor(data, dtype=tfloat)
     output = model(data)
-    prediction = argmax(output) #Unsure if this is valid in our case? Still needs testing
-    return prediction
+    prediction = argmax(output) 
+    return prediction.item()
 
 # Instantiating a Net object 
 model = Net()
@@ -93,12 +93,10 @@ def train(epoch, train_loader):
         loss.backward()
         optimizer.step()
         #Printing updates as training occurs
-        if batch_idx % 25 == 0:
-            print('Train Epoch: {} | Batch Status: {}/{} ({:.0f}%) | Loss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
-    # Saving the model so it can be used again without retraining (unsure if this the right place for this)
-    save(model, 'model.pth')
+        # if batch_idx % 25 == 0:
+        #     print('Train Epoch: {} | Batch Status: {}/{} ({:.0f}%) | Loss: {:.6f}'.format(
+        #         epoch, batch_idx * len(data), len(train_loader.dataset),
+        #         100. * batch_idx / len(train_loader), loss.item()))
     return epoch
 
 def test(test_loader):
@@ -118,30 +116,5 @@ def test(test_loader):
     print(f'===========================\nTest set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} '
           f'({100. * correct / len(test_loader.dataset):.0f}%)')
 
-
-def test_and_train(US_epoch, tain_loader, tst_loader): #Accepts a user selected value of epoch
-    for epoch in range(1, US_epoch):
-        train(epoch, tain_loader)
-        test(tst_loader)
-
-def testtest_and_train(US_epoch, tain_loader, tst_loader): #Accepts a user selected value of epoch
-    since = time.time()
-    for epoch in range(1, US_epoch):
-        epoch_start = time.time()
-        train(epoch, tain_loader)
-
-        m, s = divmod(time.time() - epoch_start, 60)
-        print(f'Training time: {m:.0f}m {s:.0f}s')
-
-        test(tst_loader)
-
-        m, s = divmod(time.time() - epoch_start, 60)
-        print(f'Testing time: {m:.0f}m {s:.0f}s')
-
-    m, s = divmod(time.time() - since, 60)
-    print(f'Total Time: {m:.0f}m {s:.0f}s')
-
-if __name__ == '__main__':
-    test_and_train(2)
 
 

@@ -12,6 +12,7 @@ import numpy as np
 filePlace = ''
 
 def QPixmapToArray(pixmap):
+    pixmap = pixmap.scaledToHeight(28)
     ## Get the size of the current pixmap
     size = pixmap.size()
     h = size.width()
@@ -120,6 +121,9 @@ class App (QWidget):
             progress = Network.train(epoch, self.train_loader)
             Network.test(self.test_loader)
             self.timerEvent(100/(self.epoch) * progress)
+        # Saving the model so it can be used again without retraining (unsure if this the right place for this)
+        print("********************Model Saved***********************")
+        Network.save(Network.model, 'model.pth')
             
     def timerEvent(self,percentage):
         # if percentage >= 100:
@@ -132,13 +136,10 @@ class App (QWidget):
     
     def test_drawing_clicked(self):
         self.image = QPixmap('new_digit')
-        self.image = self.image.scaledToHeight(28)
-        print(self.image.save('new_digit_scaled.png',"PNG"))
         img = QPixmapToArray(self.image)
-        print("img type is:")
-        print(type(img))
         prediction = Network.netEval(img)
-        print(prediction)
+ 
+            
 
     def training(self):
         groupbox = QGroupBox('Training Settings')
@@ -270,11 +271,10 @@ class Drawer(QWidget):
     def mouseMoveEvent(self, event):
         if event.buttons() and Qt.LeftButton and self.drawing :
             painter = QPainter(self.image)
-            painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
+            painter.setPen(QPen(Qt.black, 15, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
-            print(self.image.save('new_digit.png', "PNG"))
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
