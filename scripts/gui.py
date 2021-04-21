@@ -7,9 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from PIL import Image as PIL_Image     
-import numpy as np      
-
-from matplotlib import pyplot      
+import numpy as np         
 
 
 Maxvalue = 60000
@@ -160,11 +158,6 @@ class App (QWidget):
         #     return
         self.pbar.setValue(percentage)           # update the progress bar
 
-    #calls the function that updates teh trainging progress bar
-    def doAction(self):
-        while self.step < 101:
-            self.timerEvent()
-
 
     #will submit the drawing created to the NN
     def test_drawing_clicked(self):
@@ -188,7 +181,7 @@ class App (QWidget):
 
         lbl1 = QLabel('Epoch Amount (the more you have, the more accurate the model is)')
 
-        train = QPushButton('NO PAIN NO TRAIN')
+        train = QPushButton('Train Model')
         train.clicked.connect(self.train_clicked)
 
         self.pbar = QProgressBar(self)
@@ -197,15 +190,11 @@ class App (QWidget):
         self.timer = QBasicTimer()
         self.step = 0 
 
-        self.start_btn = QPushButton('Start')
-        self.start_btn.clicked.connect(self.doAction)
-
         vbox = QVBoxLayout()
         vbox.addWidget(lbl1)
         vbox.addWidget(self.epoch_value)
         vbox.addWidget(train)
         vbox.addWidget(self.pbar)
-        vbox.addWidget(self.start_btn)
         groupbox.setLayout(vbox)
 
         return groupbox
