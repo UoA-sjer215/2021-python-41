@@ -299,6 +299,7 @@ class Drawer(QWidget):
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
+            self.image.save("new_digit.png", "PNG")
 
     def mouseReleaseEvent(self, event):
         if event.button == Qt.LeftButton:
