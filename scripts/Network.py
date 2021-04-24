@@ -67,10 +67,14 @@ class Net(nn.Module):
 def netEval(data):
     # This function (hopefully) runs the data through the currently saved nn,
     # and returns the prediction
-    model = load('model.pth')
-    model.eval()
-    data = to_tensor(data, dtype=tfloat)
-    output = model(data)
+    # model = load('model.pth')
+    # model.eval()
+    # data = to_tensor(data, dtype=tfloat)
+
+    trans1 = transforms.ToTensor()
+
+
+    output = model(trans1(data))
     prediction = argmax(output) 
     return prediction.item()
 

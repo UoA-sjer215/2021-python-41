@@ -6,3 +6,6 @@ import helper
 
 
 
+image = Image.open('new_digit.png')
+image = image.resize((400, 400))
+new_image.save('image_400.jpg')

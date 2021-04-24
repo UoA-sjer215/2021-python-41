@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from PIL import Image as PIL_Image     
+from PIL import Image     
 import numpy as np         
 
 
@@ -161,8 +161,12 @@ class App (QWidget):
 
     #will submit the drawing created to the NN
     def test_drawing_clicked(self):
-        self.image = QPixmap('new_digit')
-        img = QPixmapToArray(self.image)
+        # self.image = QPixmap('new_digit')
+        # img = QPixmapToArray(self.image)
+
+        img = Image.open('new_digit.png')
+        img = img.resize((28, 28))
+
         prediction = Network.netEval(img)
         self.upgrade_guess(prediction)
         print(prediction)
@@ -295,7 +299,7 @@ class Drawer(QWidget):
     def mouseMoveEvent(self, event):
         if event.buttons() and Qt.LeftButton and self.drawing :
             painter = QPainter(self.image)
-            painter.setPen(QPen(Qt.black, 15, Qt.SolidLine))
+            painter.setPen(QPen(Qt.white, 15, Qt.SolidLine))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
