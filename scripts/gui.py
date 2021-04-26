@@ -7,7 +7,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from PIL import Image     
-import numpy as np         
+import numpy as np
+import time
+from torchvision.utils import save_image
 
 
 Maxvalue = 60000
@@ -96,16 +98,21 @@ class App (QWidget):
 
     def go_next(self):
         print('next')
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            print('batch index = ')
+            print(batch_idx)
+            print('contents of data at index = ') 
+            print(data[batch_idx])
+            save_image(data[self.dataset_index], 'dataset_img.png')
+            self.datasetImage.setPixmap(QPixmap('dataset_img.png'))
+            self.dataset_index += 1
+            break
         
-
-
-
-
     def go_previous(self):
         print('back')
 
 
-    #Pre-traingin, will load and make the dataset usable
+    #Pre-training, will load and make the dataset usable
     #ahould aslo be able to loop through the images in the dataset 
     def preTraining(self):
         groupbox = QGroupBox('Pre-Training Settings')
@@ -117,9 +124,12 @@ class App (QWidget):
         self.dataImage = QPixmap('cat.jpg')
         self.datasetImage = QLabel()
         self.datasetImage.setPixmap(self.dataImage)
+        self.dataset_index = 0
 
+        #Next and Previous buttons
         Next = QPushButton('Next')
         Next.clicked.connect(self.go_next)
+
         Previous = QPushButton('Previous')
         Previous.clicked.connect(self.go_previous)
 
