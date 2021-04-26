@@ -93,7 +93,7 @@ class App (QWidget):
         print(self.train_loader)
         print(self.test_loader)
 
-        self.AllDataImages =  iter(self.test_loader)
+        #self.AllDataImages =  iter(self.test_loader)
 
 
     def go_next(self):
@@ -111,6 +111,7 @@ class App (QWidget):
         
     def go_previous(self):
         print('back')
+        
 
 
     #Pre-training, will load and make the dataset usable
