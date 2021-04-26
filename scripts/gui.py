@@ -7,7 +7,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from PIL import Image     
-import numpy as np         
+import numpy as np
+import time
+from torchvision.utils import save_image
 
 
 Maxvalue = 60000
@@ -91,21 +93,38 @@ class App (QWidget):
         print(self.train_loader)
         print(self.test_loader)
 
-        self.AllDataImages =  iter(self.test_loader)
+        #self.AllDataImages =  iter(self.test_loader)
 
 
     def go_next(self):
         print('next')
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            if(batch_idx > self.dataset_index):
+                self.dataset_index += 1
+                save_image(data, 'dataset_img.png')
+                data_pixmap = QPixmap('dataset_img.png')
+                data_pixmap = data_pixmap.scaledToHeight(280)
+                self.datasetImage.setPixmap(data_pixmap)
+                
+                break
+
+            
+        
+    def go_previous(self):
+        print('back')
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            if(batch_idx > self.dataset_index-2):
+                self.dataset_index += -1
+                save_image(data, 'dataset_img.png')
+                data_pixmap = QPixmap('dataset_img.png')
+                data_pixmap = data_pixmap.scaledToHeight(280)
+                self.datasetImage.setPixmap(data_pixmap)
+                
+                break
         
 
 
-
-
-    def go_previous(self):
-        print('back')
-
-
-    #Pre-traingin, will load and make the dataset usable
+    #Pre-training, will load and make the dataset usable
     #ahould aslo be able to loop through the images in the dataset 
     def preTraining(self):
         groupbox = QGroupBox('Pre-Training Settings')
@@ -117,9 +136,12 @@ class App (QWidget):
         self.dataImage = QPixmap('cat.jpg')
         self.datasetImage = QLabel()
         self.datasetImage.setPixmap(self.dataImage)
+        self.dataset_index = -1
 
+        #Next and Previous buttons
         Next = QPushButton('Next')
         Next.clicked.connect(self.go_next)
+
         Previous = QPushButton('Previous')
         Previous.clicked.connect(self.go_previous)
 

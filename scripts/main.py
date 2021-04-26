@@ -4,6 +4,7 @@
 import Network
 import gui
 import sys
+import time
 
 if __name__ == '__main__':
     #creates the qapplication
