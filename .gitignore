@@ -114,3 +114,4 @@ dmypy.json
 .pyre/
 scripts/test.py
 .vscode/settings.json
+new_digit.png
