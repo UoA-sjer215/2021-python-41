@@ -76,6 +76,7 @@ def netEval(data):
 
     output = model(trans1(data))
     prediction = argmax(output) 
+    print(output)
     return prediction.item()
 
 # Instantiating a Net object 
