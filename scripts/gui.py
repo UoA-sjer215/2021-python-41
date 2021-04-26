@@ -99,12 +99,15 @@ class App (QWidget):
     def go_next(self):
         print('next')
         for batch_idx, (data, target) in enumerate(self.train_loader):
-            save_image(data[self.dataset_index], 'dataset_img.png')
-            data_pixmap = QPixmap('dataset_img.png')
-            data_pixmap = data_pixmap.scaledToHeight(280)
-            self.datasetImage.setPixmap(data_pixmap)
-            self.dataset_index += 1
-            break
+            if(batch_idx > self.dataset_index):
+                save_image(data, 'dataset_img.png')
+                data_pixmap = QPixmap('dataset_img.png')
+                data_pixmap = data_pixmap.scaledToHeight(280)
+                self.datasetImage.setPixmap(data_pixmap)
+                self.dataset_index += 1
+                break
+
+            
         
     def go_previous(self):
         print('back')
