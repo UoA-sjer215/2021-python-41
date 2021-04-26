@@ -100,17 +100,27 @@ class App (QWidget):
         print('next')
         for batch_idx, (data, target) in enumerate(self.train_loader):
             if(batch_idx > self.dataset_index):
+                self.dataset_index += 1
                 save_image(data, 'dataset_img.png')
                 data_pixmap = QPixmap('dataset_img.png')
                 data_pixmap = data_pixmap.scaledToHeight(280)
                 self.datasetImage.setPixmap(data_pixmap)
-                self.dataset_index += 1
+                
                 break
 
             
         
     def go_previous(self):
         print('back')
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            if(batch_idx > self.dataset_index-2):
+                self.dataset_index += -1
+                save_image(data, 'dataset_img.png')
+                data_pixmap = QPixmap('dataset_img.png')
+                data_pixmap = data_pixmap.scaledToHeight(280)
+                self.datasetImage.setPixmap(data_pixmap)
+                
+                break
         
 
 
@@ -126,7 +136,7 @@ class App (QWidget):
         self.dataImage = QPixmap('cat.jpg')
         self.datasetImage = QLabel()
         self.datasetImage.setPixmap(self.dataImage)
-        self.dataset_index = 0
+        self.dataset_index = -1
 
         #Next and Previous buttons
         Next = QPushButton('Next')
