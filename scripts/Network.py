@@ -21,17 +21,6 @@ from torch import argmax
 # Training settings
 batch_size = 64
 
-num0 = 0
-num1 = 0
-num2 = 0
-num3 = 0
-num4 = 0
-num5 = 0
-num6 = 0
-num7 = 0
-num8 = 0
-num9 = 0
-
 # Downloading/locating MNIST Dataset 
 def get_train_set():
     train_dataset = datasets.MNIST(root='mnist_data_train/', train=True, transform=transforms.ToTensor(), download=True)
@@ -65,19 +54,16 @@ class Net(nn.Module):
         return self.l5(x)
 
 def netEval(data):
-    # This function (hopefully) runs the data through the currently saved nn,
-    # and returns the prediction
-    # model = load('model.pth')
-    # model.eval()
-    # data = to_tensor(data, dtype=tfloat)
-
     trans1 = transforms.ToTensor()
-
-
     output = model(trans1(data))
     prediction = argmax(output) 
-    print(output)
-    return prediction.item()
+    access = output[0]
+    nums_for_sam = []
+    for i in range(10):
+        selection = access[i]
+        nums_for_sam.append(selection.item())
+    nums_for_sam.append(prediction.item())
+    return nums_for_sam
 
 # Instantiating a Net object 
 model = Net()
