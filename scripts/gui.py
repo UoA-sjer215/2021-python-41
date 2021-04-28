@@ -95,34 +95,58 @@ class App (QWidget):
 
         #self.AllDataImages =  iter(self.test_loader)
 
-
     def go_next(self):
         print('next')
-        for batch_idx, (data, target) in enumerate(self.train_loader):
-            if(batch_idx > self.dataset_index):
-                self.dataset_index += 1
-                save_image(data, 'dataset_img.png')
-                data_pixmap = QPixmap('dataset_img.png')
-                data_pixmap = data_pixmap.scaledToHeight(280)
-                self.datasetImage.setPixmap(data_pixmap)
-                
-                break
+        if(self.viewing_dataset == 0):
+            for batch_idx, (data, target) in enumerate(self.train_loader):
+                if(batch_idx > self.dataset_index):
+                    self.dataset_index += 1
+                    save_image(data, 'dataset_img.png')
+                    data_pixmap = QPixmap('dataset_img.png')
+                    data_pixmap = data_pixmap.scaledToHeight(280)
+                    self.datasetImage.setPixmap(data_pixmap)
+                    
+                    break
+        else:
+            for batch_idx, (data, target) in enumerate(self.test_loader):
+                if(batch_idx > self.dataset_index):
+                    self.dataset_index += 1
+                    save_image(data, 'dataset_img.png')
+                    data_pixmap = QPixmap('dataset_img.png')
+                    data_pixmap = data_pixmap.scaledToHeight(280)
+                    self.datasetImage.setPixmap(data_pixmap)
+                    
+                    break
 
-            
-        
     def go_previous(self):
         print('back')
-        for batch_idx, (data, target) in enumerate(self.train_loader):
-            if(batch_idx > self.dataset_index-2):
-                self.dataset_index += -1
-                save_image(data, 'dataset_img.png')
-                data_pixmap = QPixmap('dataset_img.png')
-                data_pixmap = data_pixmap.scaledToHeight(280)
-                self.datasetImage.setPixmap(data_pixmap)
-                
-                break
+        if(self.viewing_dataset == 0):
+            for batch_idx, (data, target) in enumerate(self.train_loader):
+                if(batch_idx > self.dataset_index-2):
+                    self.dataset_index += -1
+                    save_image(data, 'dataset_img.png')
+                    data_pixmap = QPixmap('dataset_img.png')
+                    data_pixmap = data_pixmap.scaledToHeight(280)
+                    self.datasetImage.setPixmap(data_pixmap)
+                    
+                    break
+        else:
+            for batch_idx, (data, target) in enumerate(self.test_loader):
+                if(batch_idx > self.dataset_index-2):
+                    self.dataset_index += -1
+                    save_image(data, 'dataset_img.png')
+                    data_pixmap = QPixmap('dataset_img.png')
+                    data_pixmap = data_pixmap.scaledToHeight(280)
+                    self.datasetImage.setPixmap(data_pixmap)
+                    
+                    break
         
-
+    def switch_set(self):
+        print('switch')
+        if(self.viewing_dataset == 0):
+            self.viewing_dataset = 1
+        else:
+            self.viewing_dataset = 0
 
     #Pre-training, will load and make the dataset usable
     #ahould aslo be able to loop through the images in the dataset 
@@ -137,6 +161,7 @@ class App (QWidget):
         self.datasetImage = QLabel()
         self.datasetImage.setPixmap(self.dataImage)
         self.dataset_index = -1
+        self.viewing_dataset = 0
 
         #Next and Previous buttons
         Next = QPushButton('Next')
@@ -145,11 +170,16 @@ class App (QWidget):
         Previous = QPushButton('Previous')
         Previous.clicked.connect(self.go_previous)
 
+        #Change dataset to view
+        Change_set = QPushButton('Switch Dataset')
+        Change_set.clicked.connect(self.switch_set)
+
         vbox = QVBoxLayout()
         vbox.addWidget(importTraining)
         vbox.addWidget(self.datasetImage)
         vbox.addWidget(Next)
         vbox.addWidget(Previous)
+        vbox.addWidget(Change_set)
         
         vbox.addStretch(1)
         groupbox.setLayout(vbox)
