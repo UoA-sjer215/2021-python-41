@@ -271,9 +271,10 @@ class App (QWidget):
 
 
 
-
+#this entire code comes from this post from stack overflow
+# https://stackoverflow.com/questions/51475306/drawing-on-top-of-image-in-pyqt5-tracing-the-mouse/51475353
 class Drawer(QWidget):
-
+    #creates the drawer window and 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("drawing")
