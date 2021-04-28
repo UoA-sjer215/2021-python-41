@@ -8,7 +8,6 @@ from PyQt5.QtCore import *
 
 from PIL import Image     
 import numpy as np
-import time
 from torchvision.utils import save_image
 
 
