@@ -191,7 +191,6 @@ class App (QWidget):
 
         prediction = Network.netEval(img)
         self.upgrade_guess(prediction)
-        print(prediction)
 
 
 
@@ -250,53 +249,54 @@ class App (QWidget):
         groupbox = QGroupBox('Number Guesses')
 
         self.numGuess =QLabel("No guess made")
-        # self.N0 = QProgressBar(self)
-        # self.N1 = QProgressBar(self)
-        # self.N2 = QProgressBar(self)
-        # self.N3 = QProgressBar(self)
-        # self.N4 = QProgressBar(self)
-        # self.N5 = QProgressBar(self)
-        # self.N6 = QProgressBar(self)
-        # self.N7 = QProgressBar(self)
-        # self.N8 = QProgressBar(self)
-        # self.N9 = QProgressBar(self)
+        self.N0 = QProgressBar(self)
+        self.N1 = QProgressBar(self)
+        self.N2 = QProgressBar(self)
+        self.N3 = QProgressBar(self)
+        self.N4 = QProgressBar(self)
+        self.N5 = QProgressBar(self)
+        self.N6 = QProgressBar(self)
+        self.N7 = QProgressBar(self)
+        self.N8 = QProgressBar(self)
+        self.N9 = QProgressBar(self)
 
         vbox = QVBoxLayout()
         vbox.addWidget(self.numGuess)
-        # vbox.addWidget(self.N0)
-        # vbox.addWidget(self.N1)
-        # vbox.addWidget(self.N2)
-        # vbox.addWidget(self.N3)
-        # vbox.addWidget(self.N4)
-        # vbox.addWidget(self.N5)
-        # vbox.addWidget(self.N6)
-        # vbox.addWidget(self.N7)
-        # vbox.addWidget(self.N8)
-        # vbox.addWidget(self.N9)
+        vbox.addWidget(self.N0)
+        vbox.addWidget(self.N1)
+        vbox.addWidget(self.N2)
+        vbox.addWidget(self.N3)
+        vbox.addWidget(self.N4)
+        vbox.addWidget(self.N5)
+        vbox.addWidget(self.N6)
+        vbox.addWidget(self.N7)
+        vbox.addWidget(self.N8)
+        vbox.addWidget(self.N9)
 
         groupbox.setLayout(vbox)
         return groupbox
 
-    #the function to call to update the quess values 
+    #the function to call to update the guess values 
     def upgrade_guess(self,prediction):
-        self.numGuess.setText("Prediction is that it's number" + str(prediction))
+        self.numGuess.setText("Prediction is that it's number" + str(prediction[10]))
 
-        # self.N0.setValue(num0/total_guess * 100) 
-        # self.N1.setValue(num0/total_guess * 100) 
-        # self.N2.setValue(num0/total_guess * 100) 
-        # self.N3.setValue(num0/total_guess * 100) 
-        # self.N4.setValue(num0/total_guess * 100) 
-        # self.N5.setValue(num0/total_guess * 100) 
-        # self.N6.setValue(num0/total_guess * 100) 
-        # self.N7.setValue(num0/total_guess * 100) 
-        # self.N8.setValue(num0/total_guess * 100) 
-        # self.N9.setValue(num0/total_guess * 100) 
-
-
+        self.N0.setValue((prediction[0] + 10)*5) 
+        self.N1.setValue((prediction[1] + 10)*5) 
+        self.N2.setValue((prediction[2] + 10)*5) 
+        self.N3.setValue((prediction[3] + 10)*5) 
+        self.N4.setValue((prediction[4] + 10)*5) 
+        self.N5.setValue((prediction[5] + 10)*5) 
+        self.N6.setValue((prediction[6] + 10)*5) 
+        self.N7.setValue((prediction[7] + 10)*5) 
+        self.N8.setValue((prediction[8] + 10)*5) 
+        self.N9.setValue((prediction[9] + 10)*5) 
 
 
+
+#this entire code comes from this post from stack overflow
+# https://stackoverflow.com/questions/51475306/drawing-on-top-of-image-in-pyqt5-tracing-the-mouse/51475353
 class Drawer(QWidget):
-
+    #creates the drawer window and 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("drawing")
